@@ -1,4 +1,4 @@
-#Batch Entropy Regularization (Tensorflow)
+# Batch Entropy Regularization (Tensorflow)
 
 A Tensorflow implementation of [Batch Entropy Regularization](https://openreview.net/forum?id=LJohl5DnZf) (Peer et al 2022).
 
