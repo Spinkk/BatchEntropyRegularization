@@ -5,3 +5,4 @@
 ~/tensorflow_datasets/mnist/3.0.1/mnist-test.tfrecord-00000-of-00001
 ~/tensorflow_datasets/mnist/3.0.1/mnist-train.tfrecord-00000-of-00001
 .ipynb_checkpoints/MNIST_FNN_Experiment-checkpoint.ipynb
+experiments/.ipynb_checkpoints/Batch_Entropy_Regularization_Experiment-checkpoint.ipynb
