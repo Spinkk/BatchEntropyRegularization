@@ -26,6 +26,6 @@ with tf.GradientTape() as tape:
 
 Results for MNIST (150 layers)
 
-![Accuracies](experiments/results/accuracies.svg)
-![Categorical Crossentropy](experiments/results/crossentropy.svg)
-![Batch Entropy Loss](experiments/results/LBE_loss.svg)
+![Accuracies](experiments/results/FNN_MNIST_150/accuracies.svg)
+![Categorical Crossentropy](experiments/results/FNN_MNIST_150/crossentropy.svg)
+![Batch Entropy Loss](experiments/results/FNN_MNIST_150/LBE_loss.svg)
