@@ -9,4 +9,8 @@ In this implementation, each layer needs its own LBERegularizer module which is 
 Since regularizer objects are usually not expected to have trainable variables, this method currently only works in the subclassing API, 
 not in the Functional or Sequential APIs.
 
+Results for MNIST (150 layers)
 
+![Accuracies](accuracies.svg)
+![Categorical Crossentropy](crossentropy.svg)
+![Batch Entropy Loss](LBE_loss.svg)
