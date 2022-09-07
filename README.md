@@ -2,7 +2,7 @@
 
 A Tensorflow implementation of [Batch Entropy Regularization](https://openreview.net/forum?id=LJohl5DnZf) (Peer et al 2022).
 
-Unlike the original [PyTorch implementation](https://github.com/peerdavid/layerwise-batch-entropy) it does not require changes to the model's forward pass. Since regularizer objects are usually not expected to have trainable variables, this method currently only works in the subclassing API, not in the Functional or Sequential APIs.
+Unlike the original [PyTorch implementation](https://github.com/peerdavid/layerwise-batch-entropy) it does not require changes to the model's forward pass. Since regularizers are usually not expected to have trainable variables, this method currently only works in models that are constructed with the subclassing API, not with the Functional or Sequential APIs.
 
 Example usage within a subclassed model's constructor (works for any layer that allows for activity regularizers):
 ```python
