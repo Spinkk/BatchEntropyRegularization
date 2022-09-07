@@ -15,7 +15,7 @@ self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regul
 
 ```
 
-Because the LBE losses are not just added to the task loss, the loss calculation must be changed like this:
+Because the LBE losses are not just added to the task loss as with L1 or L2 regularization losses, the loss calculation must be changed like this:
 ```python
 with tf.GradientTape() as tape:
     output = model(inputs, training=True)
