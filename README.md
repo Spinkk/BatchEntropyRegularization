@@ -9,8 +9,19 @@ In this implementation, each layer needs its own LBERegularizer module which is 
 Since regularizer objects are usually not expected to have trainable variables, this method currently only works in the subclassing API, 
 not in the Functional or Sequential APIs.
 
+Usage within a subclassed model's constructor:
+```python
+self.lbe_regs = [LBERegularizer(lbe_alpha=0.5,
+                                            lbe_alpha_min=0.3,
+                                            lbe_beta=0.2)
+                            for _ in range(10)]
+self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regularizer=lbe_reg) 
+                            for lbe_reg in self.lbe_regs]
+
+```
+
 Results for MNIST (150 layers)
 
-![Accuracies](accuracies.svg)
-![Categorical Crossentropy](crossentropy.svg)
-![Batch Entropy Loss](LBE_loss.svg)
+![Accuracies](experiments/results/accuracies.svg)
+![Categorical Crossentropy](experiments/results/crossentropy.svg)
+![Batch Entropy Loss](experiments/results/LBE_loss.svg)
