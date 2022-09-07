@@ -15,6 +15,15 @@ self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regul
 
 ```
 
+Because the LBE losses are not just added to the task loss, the loss calculation must be changed like this:
+```python
+with tf.GradientTape() as tape:
+    output = model(inputs, training=True)
+    loss = loss_function(targets, output)
+    lbe = tf.reduce_sum(model.losses, axis=None) * loss
+    loss = loss + lbe
+```
+
 Results for MNIST (150 layers)
 
 ![Accuracies](experiments/results/accuracies.svg)
