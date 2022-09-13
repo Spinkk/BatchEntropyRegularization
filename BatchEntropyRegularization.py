@@ -1,4 +1,3 @@
-# +
 import tensorflow as tf
 import math as m
 
@@ -17,6 +16,13 @@ class LBERegularizer(tf.Module):
     it also **does not work in the Sequential and Functional API** style of models!
     
     It works only in models that rely solely on the subclassing API.
+    
+    Args:
+    lbe_alpha (float) : Initial layer batch entropy target
+    lbe_beta (float) : Regularization coefficient
+    lbe_alpha_min (float) : Minimal possible lbe target value
+    
+    Returns a scalar Tensor (like other layer regularizers)
     
     Example (Subclassing API):
     
@@ -135,6 +141,7 @@ class LBERegularizer(tf.Module):
         # learnable parameter (batch entropy target for the layer)
         self.lbe_alpha_p = tf.Variable(lbe_alpha, dtype=tf.float32,
                                      trainable=True, name="lbe_alpha")
+        
         # regularization strength for that layer
         self.lbe_beta = lbe_beta
         
@@ -157,11 +164,11 @@ class LBERegularizer(tf.Module):
         """
         x = self.flatten(x)
         # compute std across batch dimension
-        x_std = tf.math.reduce_std(x, axis=0) 
+        x_std = tf.math.reduce_std(x, axis=0)
         # compute entropy for each unit
-        entropies = 0.5 * tf.math.log(m.pi * m.e * x_std**2 + 1) 
+        entropies = 0.5 * tf.math.log(m.pi * m.e * x_std**2 + 1)
         # take mean of entropy across units
-        return tf.reduce_mean(entropies) 
+        return tf.reduce_mean(entropies)
     
     def lbe(self, x):
         """ Estimate the squared error between the differential entropy of
@@ -172,6 +179,6 @@ class LBERegularizer(tf.Module):
         lbe_alpha_l = tf.abs(self.lbe_alpha_p)
         # compute squared error between the learned desired batch entropy level
         lbe_l = (self.batch_entropy(x) - tf.maximum(self.lbe_alpha_min, lbe_alpha_l))**2
+        
         # scale with lbe coefficient beta
         return lbe_l * self.lbe_beta
-

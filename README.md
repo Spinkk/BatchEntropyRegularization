@@ -10,7 +10,7 @@ self.lbe_regs = [LBERegularizer(lbe_alpha=0.5,
                                             lbe_alpha_min=0.3,
                                             lbe_beta=0.2)
                             for _ in range(10)]
-self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regularizer=lbe_reg) 
+self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regularizer=lbe_reg)
                             for lbe_reg in self.lbe_regs]
 
 ```
@@ -18,12 +18,13 @@ self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regul
 Because the LBE losses are not just added to the task loss as with L1 or L2 regularization losses, the loss calculation must be changed like this:
 ```python
 with tf.GradientTape() as tape:
-    output = model(inputs, training=True)
-    loss = loss_function(targets, output)
-    lbe = tf.reduce_sum(model.losses, axis=None) * loss
-    loss = loss + lbe
-```
+    output = self(inputs, training=True)
+    ce = self.compiled_loss(targets, output)
+    lbe =  tf.reduce_mean(self.losses, axis=None) * ce
+    loss = ce + lbe
 
+grads = tape.gradient(loss, self.trainable_variables)
+```
 Results for MNIST (150 layers)
 
 ![Accuracies](experiments/results/FNN_MNIST_150/accuracies.svg)
