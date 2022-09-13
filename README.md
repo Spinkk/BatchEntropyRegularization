@@ -25,7 +25,7 @@ with tf.GradientTape() as tape:
 
 grads = tape.gradient(loss, self.trainable_variables)
 ```
-Results for MNIST (150 layers)
+Results for MNIST (500 layers)
 
 ![Accuracies](experiments/results/FNN_MNIST_14/accuracies.svg)
 ![Categorical Crossentropy](experiments/results/FNN_MNIST_14/crossentropy.svg)
