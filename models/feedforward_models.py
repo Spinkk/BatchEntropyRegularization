@@ -115,7 +115,7 @@ class FNN_LBE(tf.keras.Model):
                 "accuracy": self.accuracy.result()}
 
 class FNN(tf.keras.Model):
-    def __init__(self, n_layers, width, n_out=10, out_act="softmax",
+    def __init__(self, n_layers, width, n_out=10, activation="relu", out_act="softmax",
                  initializer="glorot_uniform", **kwargs):
         """
         A feedforward neural network with `n_layers` of `width` units.
