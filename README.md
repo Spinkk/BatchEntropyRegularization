@@ -9,8 +9,8 @@ Example usage within a subclassed model's constructor (works for any layer that 
 self.lbe_regs = [LBERegularizer(lbe_alpha=6.0,
                                 lbe_alpha_min=0.5,
                                 lbe_beta=1.5)
-                    for _ in range(10)]
-self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regularizer=lbe_reg)
+                    for _ in range(250)]
+self.dense_layers = [tf.keras.layers.Dense(1000, activation="relu", activity_regularizer=lbe_reg)
                         for lbe_reg in self.lbe_regs]
 
 ```
