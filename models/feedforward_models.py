@@ -65,15 +65,17 @@ class FNN_LBE(tf.keras.Model):
             metric.reset_state()
 
     @tf.function
-    def train_step(self, data: tf.Tensor):
+    def train_step(self, data):
 
         inputs, targets = data
-
         with tf.GradientTape() as tape:
             output = self(inputs, training=True)
             ce = self.compiled_loss(targets, output)
-            lbe =  tf.reduce_mean(self.losses, axis=None) * ce
-            loss = ce + (self.LBE_strength * lbe)
+            reg_losses = tf.convert_to_tensor(self.losses)
+            be_losses = reg_losses[:,0] # get lbe loss from regularization losses
+            other_regularization_losses = reg_losses[:,1:] # all other reg losses
+            lbe =  tf.reduce_mean(be_losses, axis=None) * ce
+            loss = ce + (self.LBE_strength * lbe) + other_regularization_losses
 
         grads = tape.gradient(loss, self.trainable_variables)
         self.optimizer.apply_gradients(zip(grads, self.trainable_variables))
@@ -85,21 +87,19 @@ class FNN_LBE(tf.keras.Model):
         self.loss_tracker_ce.update_state(ce)
         self.accuracy.update_state(targets, output)
 
-        return {"loss" : self.loss_tracker.result(),
-                "lbe"  : self.loss_tracker_lbe.result(),
-                "max_lbe": self.loss_tracker_maxlbe.result(),
-                "ce"   : self.loss_tracker_ce.result(),
-                "accuracy": self.accuracy.result()}
+        return {metric.name : metric.result() for metric in self.metrics}
 
     @tf.function
     def test_step(self, data: tf.Tensor):
 
         inputs, targets = data
-
         output = self(inputs, training=False)
         ce  = self.compiled_loss(targets, output)
-        lbe =  tf.reduce_mean(self.losses, axis=None) * ce
-        loss = ce + (self.LBE_strength * lbe)
+        reg_losses = tf.convert_to_tensor(self.losses)
+        be_losses = reg_losses[:,0]
+        other_regularization_losses = reg_losses[:,1:]
+        lbe =  tf.reduce_mean(be_losses, axis=None) * ce
+        loss = ce + (self.LBE_strength * lbe) + other_regularization_losses
 
         # update metric states
         self.loss_tracker.update_state(loss)
@@ -108,11 +108,7 @@ class FNN_LBE(tf.keras.Model):
         self.loss_tracker_ce.update_state(ce)
         self.accuracy.update_state(targets, output)
 
-        return {"loss": self.loss_tracker.result(),
-                "lbe"  : self.loss_tracker_lbe.result(),
-                "max_lbe": self.loss_tracker_maxlbe.result(),
-                "ce"  : self.loss_tracker_ce.result(),
-                "accuracy": self.accuracy.result()}
+        return {metric.name : metric.result() for metric in self.metrics}
 
 class FNN(tf.keras.Model):
     def __init__(self, n_layers, width, n_out=10, activation="relu", out_act="softmax",
@@ -163,7 +159,7 @@ class FNN(tf.keras.Model):
 
         with tf.GradientTape() as tape:
             output = self(inputs, training=True)
-            ce = self.compiled_loss(targets, output)
+            ce = self.compiled_loss(targets, output) + tf.reduce_sum(self.losses)
             loss = ce
 
         grads = tape.gradient(loss, self.trainable_variables)
@@ -173,8 +169,7 @@ class FNN(tf.keras.Model):
         self.loss_tracker.update_state(loss)
         self.accuracy.update_state(targets, output)
 
-        return {"loss" : self.loss_tracker.result(),
-                "accuracy": self.accuracy.result()}
+        return {metric.name : metric.result() for metric in self.metrics}
 
     @tf.function
     def test_step(self, data: tf.Tensor):
@@ -182,12 +177,11 @@ class FNN(tf.keras.Model):
         inputs, targets = data
 
         output = self(inputs, training=False)
-        ce = self.compiled_loss(targets, output)
+        ce = self.compiled_loss(targets, output) + tf.reduce_sum(self.losses)
         loss = ce
 
         # update metric states
         self.loss_tracker.update_state(loss)
         self.accuracy.update_state(targets, output)
 
-        return {"loss" : self.loss_tracker.result(),
-                "accuracy": self.accuracy.result()}
+        return {metric.name : metric.result() for metric in self.metrics}

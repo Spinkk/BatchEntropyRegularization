@@ -2,15 +2,16 @@ import json
 import os
 import tensorflow as tf
 from datasets.datasets import get_mnist, get_cifar10, get_cifar100
-from models.feedforward_models import FNN_LBE, FNN
+from models.functional_api_models import get_dense_model, get_conv2d_model
 from experiments.training_callbacks import *
 from experiments.plot_functions import plot_logs_classification
 
 # Experiment parameters
-EXPERIMENT_NAME="Subclassing_Experiment_1"
+EXPERIMENT_NAME="FunctionalAPI_1"
 
 # Dataset and task parameters
 dataset_function=get_mnist
+input_shape = (28,28,1)
 loss_function=tf.keras.losses.CategoricalCrossentropy(from_logits=True)
 N_OUT=10
 OUTPUT_ACTIVATION=None
@@ -19,9 +20,9 @@ OUTPUT_ACTIVATION=None
 train_baseline=True
 
 # Architecture parameters
-MODEL_NO_LBE=FNN
-MODEL=FNN_LBE
-N_LAYERS = 5
+MODEL_NO_LBE=get_dense_model
+MODEL=get_dense_model
+N_LAYERS = 10
 WIDTH = 256
 ACTIVATIONS="relu"
 
@@ -83,7 +84,9 @@ train_ds, val_ds = dataset_function(batch_size=BATCH_SIZE)
 
 if train_baseline:
     print("Without Layer Batch Entropy Regularization:\n\n")
-    model = MODEL_NO_LBE(n_layers=N_LAYERS,
+    model = MODEL_NO_LBE(
+              input_shape=input_shape,
+              n_layers=N_LAYERS,
               width=WIDTH,
               activation=ACTIVATIONS,
               n_out=N_OUT,
@@ -112,7 +115,8 @@ else:
 
 # Train the same network with LBE regularization
 print("\nWith Layer Batch Entropy Regularization:\n\n")
-model = MODEL(n_layers=N_LAYERS,
+model = MODEL(input_shape=input_shape,
+          n_layers=N_LAYERS,
           width=WIDTH,
           activation=ACTIVATIONS,
           n_out=N_OUT,
