@@ -26,7 +26,7 @@ self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regul
 
 ```
 
-If you want to use the functional API, you need to create custom subclasses of your layers that contain the LBERegularizers as submodules, like the following:
+If you want to use the functional API, you need to use a tf.keras.Model subclass like the one in models/model.py, and create custom subclasses of your layers that contain the LBERegularizers as submodules, like the following (as in layers/layers.py):
 
 ```python
 class Dense_LBE(tf.keras.layers.Dense):
