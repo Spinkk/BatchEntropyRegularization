@@ -16,9 +16,9 @@ Since regularizers in Tensorflow are usually not expected to have trainable vari
 
 This is an example of LBERegularizer used within a subclassed model's constructor (works for any layer that allows for activity regularizers):
 ```python
-self.lbe_regs = [LBERegularizer(lbe_alpha=0.5,
-                                            lbe_alpha_min=0.3,
-                                            lbe_beta=0.2,
+self.lbe_regs = [LBERegularizer(lbe_alpha=6.0,
+                                            lbe_alpha_min=0.5,
+                                            lbe_beta=1.0,
                                             other_activity_regularizer=None) # can also be tf.keras.regularizers.L1(1e-6)
                             for _ in range(10)]
 self.dense_layers = [tf.keras.layers.Dense(32, activation="relu", activity_regularizer=lbe_reg)
